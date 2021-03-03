@@ -1,0 +1,290 @@
+1. Create root directory: ProjectName.Solution
+2. Add .gitignore
+    */obj/
+    */bin/
+3. Create ProjectName directory 
+
+IN ProjectName DIRECTORY:
+
+4. Add ProjectName.csproj
+    -Add boilerplate as follows:
+
+
+    <Project Sdk="Microsoft.NET.Sdk.Web">
+
+      <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+      </PropertyGroup>
+    
+    </Project>
+
+
+5. Create Models directory 
+6. Add a template Model TempModel.cs
+    -Add the following boilerplate
+
+
+    using System.Collections.Generic;
+
+    namespace ProjectName.Models
+    {
+      public class Temp
+      {
+        public string Something { get; set; }
+      }
+    }
+
+
+7. Create a Controllers directory 
+8. Add HomeController.cs
+    -Add the following boilerplate code: 
+
+    
+    using Microsoft.AspNetCore.Mvc;
+
+    namespace ProjectName.Controllers
+    {
+        public class HomeController : Controller
+        {
+
+          [HttpGet("/")]
+          public ActionResult Index()
+          {
+            return View();
+          }
+
+        }
+    }
+
+
+9. Add TempModelsController.cs
+    -Add the following boilerplate code:
+
+    
+    using Microsoft.AspNetCore.Mvc;
+    using ProjectName.Models;
+    using System.Collections.Generic;
+
+    namespace ProjectName.Controllers
+    {
+      public class TempModelsController : Controller
+      {
+
+        [HttpGet("/items")]
+        public ActionResult Index()
+        {
+          return View();
+        }
+
+      }
+    }
+
+
+10. Create Views directory
+11. Create Home directory in Views directory
+12. Add Index.cshtml to Home directory 
+13. Create TempModels directory in Views directory
+14. Add Index.cshtml in TempModels directory 
+15. OPTIONAL: Add TempForm.cshtml to TempModels directory 
+16. OPTIONAL: Add the following boilerplate code:
+
+
+    <form action="/items" method="post">
+      <label for="something">Add something</label>
+      <input id="something" name="something" type="text">
+      <button type="submit">Submit</button>
+    </form>
+
+
+17. Add Program.cs in root of ProjectName directory
+    -Add following boilerplate code:
+
+
+    using System.IO;
+    using Microsoft.AspNetCore.Hosting;
+
+    namespace ProjectName
+    {
+      public class Program
+      {
+        public static void Main(string[] args)
+        {
+          var host = new WebHostBuilder()
+            .UseKestrel()
+            .UseContentRoot(Directory.GetCurrentDirectory())
+            .UseIISIntegration()
+            .UseStartup<Startup>()
+            .Build();
+
+          host.Run();
+        }
+      }
+    }
+
+
+18. Add Startup.cs in root of ProjectName directory
+    -Add following boilerplate code:
+
+
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+
+    namespace ProjectName
+    {
+      public class Startup
+      {
+        public Startup(IWebHostEnvironment env)
+        {
+          var builder = new ConfigurationBuilder()
+              .SetBasePath(env.ContentRootPath)
+              .AddEnvironmentVariables();
+          Configuration = builder.Build();
+        }
+
+        public IConfigurationRoot Configuration { get; }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+          services.AddMvc();
+        }
+
+        public void Configure(IApplicationBuilder app)
+        {
+          app.UseDeveloperExceptionPage();
+          app.UseRouting();
+
+          app.UseEndpoints(routes =>
+          {
+            routes.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+          });
+
+          app.Run(async (context) =>
+          {
+            await context.Response.WriteAsync("Hello World!");
+          });
+        }
+      }
+    }
+
+
+19. Create ProjectName.Tests directory 
+    
+IN ProjectName.Tests DIRECTORY
+
+20. Add ProjectName.Tests.csproj
+    -Add following boilerplate code:
+
+
+    <Project Sdk="Microsoft.NET.Sdk.Web">
+
+      <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+        <PackageReference Include="MSTest.TestAdapter" Version="1.2" />
+        <PackageReference Include="MSTest.TestFramework" Version="1.2" />
+      </ItemGroup>
+
+      <ItemGroup>
+        <ProjectReference Include="..\ProjectName\ProjectName.csproj" />  
+      </ItemGroup>
+
+    </Project>
+
+
+21. Create Models.Tests directory
+22. Add Temp.Tests.cs file (to match file in ProjectName/Models)
+    -Add the following boilerplate (commented out tests for reference)
+
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Collections.Generic;
+    using Template.Models;
+    using System;
+
+    namespace ToDoList.Tests
+    {
+      [TestClass]
+      public class ItemTest : IDisposable
+      {
+
+        public void Dispose()
+        {
+          Item.ClearAll();
+        }
+
+        [TestMethod]
+        public void ItemConstructor_CreatesInstanceOfItem_Item()
+        {
+          Item newItem = new Item("test");
+          Assert.AreEqual(typeof(Item), newItem.GetType());
+        }
+
+        // [TestMethod]
+        // public void GetDescription_ReturnsDescription_String()
+        // {
+        //   //Arrange
+        //   string description = "Walk the dog.";
+
+        //   //Act
+        //   Item newItem = new Item(description);
+        //   string result = newItem.Description;
+
+        //   //Assert
+        //   Assert.AreEqual(description, result);
+        // }
+
+        // [TestMethod]
+        // public void SetDescription_SetDescription_String()
+        // {
+        //   //Arrange
+        //   string description = "Walk the dog.";
+        //   Item newItem = new Item(description);
+
+        //   //Act
+        //   string updatedDescription = "Do the dishes";
+        //   newItem.Description = updatedDescription;
+        //   string result = newItem.Description;
+
+        //   //Assert
+        //   Assert.AreEqual(updatedDescription, result);
+        // }
+
+        // [TestMethod]
+        // public void GetAll_ReturnsEmptyList_ItemList()
+        // {
+        //   // Arrange
+        //   List<Item> newList = new List<Item> { };
+
+        //   // Act
+        //   List<Item> result = Item.GetAll();
+
+        //   // Assert
+        //   CollectionAssert.AreEqual(newList, result);
+        // }
+
+        // [TestMethod]
+        // public void GetAll_ReturnsItems_ItemList()
+        // {
+        //   //Arrange
+        //   string description01 = "Walk the dog";
+        //   string description02 = "Wash the dishes";
+        //   Item newItem1 = new Item(description01);
+        //   Item newItem2 = new Item(description02);
+        //   List<Item> newList = new List<Item> { newItem1, newItem2 };
+
+        //   //Act
+        //   List<Item> result = Item.GetAll();
+
+        //   //Assert
+        //   CollectionAssert.AreEqual(newList, result);
+        // }
+      }
+    }
+
